@@ -1,0 +1,19 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": "airbnb-base",
+  "parser": "babel-eslint",
+  "plugins": [
+    "import"
+  ],
+  "rules": {
+    "no-console": 0,
+    "no-unused-vars": 0,
+    "class-methods-use-this": 0,
+    "no-plusplus": 0,
+    "no-useless-constructor": 1,
+    "no-empty-function": 1
+  }
+}

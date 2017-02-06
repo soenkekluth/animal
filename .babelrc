@@ -1,0 +1,13 @@
+{
+  "presets": [
+    ["es2015", {"loose": true}]
+  ],
+
+  "plugins": [
+    "transform-class-properties"
+  ],
+
+  "ignore": [
+       "/node_modules/(?!dom-helpers|my_module2)"
+   ]
+}
