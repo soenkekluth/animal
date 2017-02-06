@@ -2,7 +2,7 @@ import requestAnimationFrame from 'dom-helpers/util/requestAnimationFrame';
 
 const regex = new RegExp('[0-9]+');
 
-const animateProp = (target, props, duration, easing) => new Promise((resolve, reject) => {
+const animal = (target, props, duration, easing) => new Promise((resolve, reject) => {
   const propertyName = Object.keys(props)[0];
   let finalValue = props[propertyName];
   const initialValue = parseFloat(target[propertyName], 10) || 0;
@@ -44,4 +44,4 @@ const animateProp = (target, props, duration, easing) => new Promise((resolve, r
   render();
 });
 
-export default animateProp;
+export default animal;
