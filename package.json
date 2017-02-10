@@ -8,7 +8,7 @@
   "module": "lib/animal.es2015.js",
   "jsnext:main": "lib/animal.es2015.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\"",
     "build": "run build:lib && cp ./README.md ./lib",
     "build:lib": "babel-node ./build.js",
     "build:babel": "cross-env NODE_ENV=production babel src -d lib",
