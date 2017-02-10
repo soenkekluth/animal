@@ -1,6 +1,6 @@
 {
   "name": "animaljs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "extreme small animation library",
   "src": "src/animal.js",
   "main": "lib/animal.js",
