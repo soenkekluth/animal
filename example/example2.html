@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <link rel="stylesheet" href="">
+
+  <style>
+    body{
+      perspective: 2000px;
+      transform-style: preserve-3d;
+    }
+
+    .hans {
+      perspective: 1000px;
+      position: relative;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+  <img class="hans" data-animal="20" src="dinosaur_dino_comic_animal.svg" alt="" />
+
+
+  <script src="../dist/animal.js"></script>
+  <script>
+
+  const animal = window.animal.default;
+
+  function backInOut(t) {
+    var s = 1.70158 * 1.525;
+    if ((t *= 2) < 1)
+      return 0.5 * (t * t * ((s + 1) * t - s));
+    return 0.5 * ((t -= 2) * t * ((s + 1) * t + s) + 2);
+  }
+
+
+  function elasticInOut(t) {
+    return t < 0.5
+      ? 0.5 * Math.sin(+13.0 * Math.PI/2 * 2.0 * t) * Math.pow(2.0, 10.0 * (2.0 * t - 1.0))
+      : 0.5 * Math.sin(-13.0 * Math.PI/2 * ((2.0 * t - 1.0) + 1.0)) * Math.pow(2.0, -10.0 * (2.0 * t - 1.0)) + 1.0
+  }
+
+  const hans = document.querySelector('.hans');
+
+
+  animal(hans, {'data-animal': 300, onUpdate:function(value){
+    console.log('value', value);
+  }}, 2000);
+
+
+
+  </script>
+</body>
+</html>

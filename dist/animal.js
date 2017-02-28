@@ -81,58 +81,6 @@ var animationFrame = unwrapExports(requestAnimationFrame);
 
 var regex = new RegExp('[0-9]+');
 
-var animal = function animal(target, props, duration, easing) {
-  return new Promise(function (resolve, reject) {
-    var keys = Object.keys(props);
-    var propertyName = keys[0];
-    var attributeIndex = keys.indexOf('attribute');
-    var isAttribute = attributeIndex > -1 ? keys[attributeIndex] : false;
-    var initialValue = props.from || (isAttribute ? parseFloat(regex.exec(target.getAttribute(propertyName))[0], 10) : parseFloat(target[propertyName], 10) || 0);
-    var finalValue = props[propertyName];
-
-    var prefix = null;
-    var suffix = null;
-
-    if (typeof finalValue === 'string') {
-      var parsedValue = parseFloat(finalValue, 10);
-      if (isNaN(parsedValue)) {
-        parsedValue = regex.exec(finalValue)[0];
-      }
-      var splitted = finalValue.split('' + parsedValue);
-      suffix = splitted.length > 1 ? splitted[1] : splitted[0];
-      prefix = splitted.length > 1 ? splitted[0] : null;
-      finalValue = parsedValue;
-    }
-    var endTime = Date.now() + duration;
-    var valueDelta = finalValue - initialValue;
-
-    var render = function render() {
-      var progress = Math.min((duration - (endTime - Date.now())) / duration, 1);
-      var easingProgress = easing ? easing(progress) : progress;
-
-      var nextValue = initialValue + valueDelta * easingProgress;
-      if (suffix) {
-        nextValue = '' + nextValue + suffix;
-      }
-      if (prefix) {
-        nextValue = '' + prefix + nextValue;
-      }
-      if (isAttribute) {
-        target.setAttribute(propertyName, nextValue);
-      } else {
-        target[propertyName] = nextValue;
-      }
-
-      if (progress < 1) {
-        animationFrame(render);
-      } else {
-        resolve();
-      }
-    };
-    render();
-  });
-};
-
 var animalGroup = function animalGroup(animals) {
   return Promise.all(animals);
 };
@@ -159,6 +107,68 @@ var delay = function delay() {
         return resolve.apply(undefined, [ms].concat(args));
       });
     }, ms);
+  });
+};
+
+var animal = function animal(target, props, duration, easing) {
+  return new Promise(function (resolve, reject) {
+    var keys = Object.keys(props);
+    var propertyName = keys[0];
+    console.log(propertyName);
+    var attributeIndex = keys.indexOf('attribute');
+    var isAttribute = attributeIndex > -1 ? keys[attributeIndex] : false;
+    var initialValue = props.from || (isAttribute ? parseFloat(regex.exec(target.getAttribute(propertyName))[0], 10) : parseFloat(target[propertyName], 10) || 0);
+    console.log('initialValue', initialValue, target[propertyName]);
+    var round = !!props.round;
+    var onUpdate = props.onUpdate || function () {};
+    var finalValue = props[propertyName];
+
+    var prefix = null;
+    var suffix = null;
+
+    if (typeof finalValue === 'string') {
+      var parsedValue = parseFloat(finalValue, 10);
+      if (isNaN(parsedValue)) {
+        parsedValue = regex.exec(finalValue)[0];
+      }
+      var splitted = finalValue.split('' + parsedValue);
+      suffix = splitted.length > 1 ? splitted[1] : splitted[0];
+      prefix = splitted.length > 1 ? splitted[0] : null;
+      finalValue = parsedValue;
+    }
+    var endTime = Date.now() + duration;
+    var valueDelta = finalValue - initialValue;
+
+    var render = function render() {
+      var progress = Math.min((duration - (endTime - Date.now())) / duration, 1);
+      var easingProgress = easing ? easing(progress) : progress;
+
+      var nextValue = initialValue + valueDelta * easingProgress;
+      if (round) {
+        nextValue = Math.round(nextValue);
+      }
+      if (suffix) {
+        nextValue = '' + nextValue + suffix;
+      }
+      if (prefix) {
+        nextValue = '' + prefix + nextValue;
+      }
+
+      onUpdate(nextValue);
+
+      if (isAttribute) {
+        target.setAttribute(propertyName, nextValue);
+      } else {
+        target[propertyName] = nextValue;
+      }
+
+      if (progress < 1) {
+        animationFrame(render);
+      } else {
+        resolve();
+      }
+    };
+    animationFrame(render);
   });
 };
 

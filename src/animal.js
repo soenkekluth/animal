@@ -2,12 +2,31 @@ import animationFrame from 'dom-helpers/util/requestAnimationFrame';
 
 const regex = new RegExp('[0-9]+');
 
+
+export const animalGroup = animals => Promise.all(animals);
+
+export const nextFrame = (...args) => new Promise((resolve) => {
+  animationFrame(resolve(...args));
+});
+
+export const delay = (ms = 0, ...args) => new Promise((resolve, reject) => {
+  setTimeout(() => {
+    nextFrame()
+      .then(() => resolve(ms, ...args));
+  }, ms);
+});
+
+
 const animal = (target, props, duration, easing) => new Promise((resolve, reject) => {
   const keys = Object.keys(props);
   const propertyName = keys[0];
+  console.log(propertyName);
   const attributeIndex = keys.indexOf('attribute');
   const isAttribute = attributeIndex > -1 ? keys[attributeIndex] : false;
   const initialValue = props.from || (isAttribute ? parseFloat(regex.exec(target.getAttribute(propertyName))[0], 10) : parseFloat(target[propertyName], 10) || 0);
+  console.log('initialValue', initialValue, target[propertyName]);
+  const round = !!props.round;
+  const onUpdate = props.onUpdate || function(){};
   let finalValue = props[propertyName];
 
   let prefix = null;
@@ -31,12 +50,18 @@ const animal = (target, props, duration, easing) => new Promise((resolve, reject
     const easingProgress = easing ? easing(progress) : progress;
 
     let nextValue = initialValue + (valueDelta * easingProgress);
+    if(round){
+      nextValue = Math.round(nextValue);
+    }
     if (suffix) {
       nextValue = `${nextValue}${suffix}`;
     }
     if (prefix) {
       nextValue = `${prefix}${nextValue}`;
     }
+
+    onUpdate(nextValue);
+
     if (isAttribute) {
       target.setAttribute(propertyName, nextValue);
     } else {
@@ -49,21 +74,9 @@ const animal = (target, props, duration, easing) => new Promise((resolve, reject
       resolve();
     }
   };
-  render();
+  animationFrame(render);
 });
 
-export const animalGroup = animals => Promise.all(animals);
-
-export const nextFrame = (...args) => new Promise((resolve) => {
-  animationFrame(resolve(...args));
-});
-
-export const delay = (ms = 0, ...args) => new Promise((resolve, reject) => {
-  setTimeout(() => {
-    nextFrame()
-      .then(() => resolve(ms, ...args));
-  }, ms);
-});
 
 
 export default animal;
